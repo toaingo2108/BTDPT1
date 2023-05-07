@@ -24,10 +24,11 @@
                 <ul class="navbar-nav mr-auto">
                     <?php
 
-                    $links = array(
-                        array('link' => 'list', 'name' => 'Xem danh sách công việc'),
-                        array('link' => 'taskForm', 'name' => 'Tạo công việc mới'),
-                    );
+                    $links = [
+                        ['link' => 'list', 'name' => 'Xem danh sách công việc'],
+                        ['link' => 'taskForm', 'name' => 'Tạo công việc mới'],
+                        ['link' => 'categories', 'name' => 'Quản lý loại công việc'],
+                    ];
 
                     foreach ($links as $link) {
                         echo '

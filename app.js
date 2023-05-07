@@ -1,30 +1,45 @@
 $(document).ready(() => {
-  // Lấy danh sách tasks
-  $("#tasks-table").ready(() => {
-    getTasks();
-    // Lắng nghe sự kiện nhấn xóa nhiều task
-    $("#deleteManyTasksBtn").click(handleDeleteManyTasks);
+  const urlParams = getParams(window.location.href);
+  const page = urlParams.page;
 
-    $("#select-all").click(toggleCheckAllDelete);
-  });
+  if (page == "list") {
+    // Lấy danh sách tasks
+    $("#tasks-table").ready(() => {
+      getTasks();
+      // Lắng nghe sự kiện nhấn xóa nhiều task
+      $("#deleteManyTasksBtn").click(handleDeleteManyTasks);
 
-  $("#task-form").ready(() => {
-    getCategories();
+      $("#select-all").click(toggleCheckAllDelete);
+    });
+  }
 
-    $("#task-form-start_date").on("change", function () {
-      const startDateValue = $(this).val();
-      $("#task-form-due_date").attr("min", startDateValue);
+  if (page == "taskForm") {
+    $("#task-form").ready(() => {
+      getCategories();
+
+      $("#task-form-start_date").on("change", function () {
+        const startDateValue = $(this).val();
+        $("#task-form-due_date").attr("min", startDateValue);
+      });
+
+      $("#task-form-due_date").on("change", function () {
+        const dueDateValue = $(this).val();
+        $("#task-form-start_date").attr("max", dueDateValue);
+      });
     });
 
-    $("#task-form-due_date").on("change", function () {
-      const dueDateValue = $(this).val();
-      $("#task-form-start_date").attr("max", dueDateValue);
+    $("#task-form").submit((e) => taskFormSubmit(e));
+  }
+
+  if (page == "info") {
+    $("#task-info").ready(handleGetTask);
+  }
+
+  if (page == "categories") {
+    $("#categories-list").ready(() => {
+      getCategories();
     });
-  });
-
-  $("#task-form").submit((e) => taskFormSubmit(e));
-
-  $("#task-info").ready(handleGetTask);
+  }
 });
 
 const taskFormSubmit = (e) => {
@@ -162,20 +177,34 @@ const toggleCheckAllDelete = () => {
 };
 
 const getCategories = () => {
+  const urlParams = getParams(window.location.href);
+  const page = urlParams.page;
   $.ajax({
     url: "../controllers/CategoryController.php",
     type: "GET",
     data: { action: "getAllCategories" },
     success: (data) => {
       const categories = JSON.parse(data);
-
-      $("#task-form-category_id").empty();
-      $.each(categories, (index, category) => {
-        const option = `
-        <option value="${category.id}">${category.name}</option>
-        `;
-        $("#task-form-category_id").append(option);
-      });
+      if (page == "taskForm") {
+        $("#task-form-category_id").empty();
+        $.each(categories, (index, category) => {
+          const option = `
+          <option value="${category.id}">${category.name}</option>
+          `;
+          $("#task-form-category_id").append(option);
+        });
+      } else {
+        $("#categories-list").empty();
+        $.each(categories, (index, category) => {
+          const li = `
+          <li class="d-flex w">
+            ${category.name} 
+            <button class="btn btn-danger btn-sm" onclick="handleDeleteCategory(event)" data-category-id="${category.id}">x</button>
+          </li>
+          `;
+          $("#categories-list").append(li);
+        });
+      }
     },
   });
 };
@@ -253,6 +282,54 @@ const handleGetTask = () => {
         </div>
       `;
       $("#task-info").empty().append(html);
+    },
+    error: (xhr, status, error) => {
+      // Handle error response
+      if (xhr.status === 400) {
+        alert(xhr.responseText);
+      } else {
+        alert("An error occurred: " + error);
+      }
+    },
+  });
+};
+
+const handleCreateCategory = (event) => {
+  event.preventDefault();
+  const name = $("#category-new").val();
+
+  $.ajax({
+    url: "../controllers/CategoryController.php",
+    method: "POST",
+    data: { action: "createCategory", name },
+    success: (response) => {
+      getCategories();
+      $("#category-new").val("");
+    },
+    error: (xhr, status, error) => {
+      // Handle error response
+      if (xhr.status === 400) {
+        alert(xhr.responseText);
+      } else {
+        alert("An error occurred: " + error);
+      }
+    },
+  });
+};
+
+const handleDeleteCategory = (event) => {
+  const id = $(event.target).data("category-id");
+
+  if (!window.confirm("Bạn có muốn xóa loại công việc này không")) {
+    return;
+  }
+
+  $.ajax({
+    url: "../controllers/CategoryController.php",
+    method: "POST",
+    data: { action: "deleteCategory", id },
+    success: (response) => {
+      getCategories();
     },
     error: (xhr, status, error) => {
       // Handle error response

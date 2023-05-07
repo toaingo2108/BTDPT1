@@ -1,3 +1,11 @@
 main {
   overflow-x: auto;
 }
+
+#categories-list li {
+  max-width: 50%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  align-items: center;
+}
