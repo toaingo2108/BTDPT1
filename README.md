@@ -1,6 +1,10 @@
 # BTUDPT1
 
-## Các tính năng đã hoàn thành
+### Các tính năng chưa hoàn thành
+- Phân trang 
+- Lọc công việc sắp hết hạn, hoàn thành
+
+# Các tính năng đã hoàn thành
 
 ### - Trang 1: Trang chủ
 
