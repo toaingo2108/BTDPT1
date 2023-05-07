@@ -32,8 +32,21 @@ class TaskController
         $due_date = $_POST['due_date'];
         $category_id = $_POST['category_id'];
 
-        if (!isset($name) || !isset($description) || !isset($start_date) || !isset($due_date) || !isset($category_id)) {
-            echo 'Please complete all information';
+        if (
+            !isset($name) ||
+            !isset($description) ||
+            !isset($start_date) ||
+            !isset($due_date) ||
+            !isset($category_id) ||
+            empty($name) ||
+            empty($description) ||
+            empty($start_date) ||
+            empty($due_date) ||
+            empty($category_id)
+        ) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Please complete all information']);
+            exit;
         }
 
         $this->model->create(
