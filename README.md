@@ -1,5 +1,7 @@
 # BTUDPT1
 
+## Các tính năng đã hoàn thành
+
 ### - Trang 1: Trang chủ
 
     - Liên kết tới các trang con
@@ -11,7 +13,7 @@
 
 ### Trang 3: Xem danh sách công việc / xoá
 
-    - Có ô nhập liệu để tìm kiếm công việc (theo tên và mô tả) để tìm công việc cần thiết. Ngoài ra có thể lọc các các công việc sắp hết hạn, các công việc đã hoàn thành, các công việc đang thực hiện, …
+    - Có ô nhập liệu để tìm kiếm công việc (theo tên và mô tả) để tìm công việc cần thiết.
     - Có thể xem chi tiết công việc ở một trang riêng
     - Có thể xoá công việc trong trang xem danh sách
     - Có thể chọn nhiều công việc và xoá (sử dụng check box), có thể chọn tất cả công việc để xoá
