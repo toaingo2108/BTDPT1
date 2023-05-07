@@ -30,10 +30,25 @@ class TaskModel
         }
     }
 
-    // public function addToDo($task)
+    // public function create($task)
     // {
     //     $stmt = $this->db->prepare('INSERT INTO todos (task) values (:task)');
     //     $stmt->bindValue(':task', $task);
     //     $stmt->execute();
     // }
+
+    public function create($name, $description, $start_date, $due_date, $category_id)
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO 
+                TASK    (name, description, start_date, due_date, category_id) 
+                values  (:name, :description, :start_date, :due_date, :category_id)'
+        );
+        $stmt->bindValue(':name', $name);
+        $stmt->bindValue(':description', $description);
+        $stmt->bindValue(':start_date', $start_date);
+        $stmt->bindValue(':due_date', $due_date);
+        $stmt->bindValue(':category_id', $category_id);
+        $stmt->execute();
+    }
 }

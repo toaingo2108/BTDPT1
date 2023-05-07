@@ -24,11 +24,27 @@ class TaskController
         echo 'Tasks deleted successfully';
     }
 
-    // public function addTodo()
-    // {
-    //     $task = $_POST['task'];
-    //     $this->model->addToDo($task);
-    // }
+    public function addTask()
+    {
+        $name = $_POST['name'];
+        $description = $_POST['description'];
+        $start_date = $_POST['start_date'];
+        $due_date = $_POST['due_date'];
+        $category_id = $_POST['category_id'];
+
+        if (!isset($name) || !isset($description) || !isset($start_date) || !isset($due_date) || !isset($category_id)) {
+            echo 'Please complete all information';
+        }
+
+        $this->model->create(
+            $name,
+            $description,
+            $start_date,
+            $due_date,
+            $category_id
+        );
+        echo 'Task create successfully';
+    }
 }
 
 $controller = new TaskController();
@@ -40,6 +56,9 @@ if (isset($_REQUEST['action'])) {
             break;
         case 'deleteManyTasks':
             $controller->deleteManyTasks();
+            break;
+        case 'addTask':
+            $controller->addTask();
             break;
         default:
             http_response_code(500);
