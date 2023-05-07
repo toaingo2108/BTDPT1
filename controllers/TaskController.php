@@ -58,6 +58,64 @@ class TaskController
         );
         echo 'Task create successfully';
     }
+
+    public function getTaskById()
+    {
+        $id = $_GET['id'];
+        if (empty($id) || !isset($id)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Task ID invalid!']);
+            exit;
+        }
+
+        $task = $this->model->getById($id);
+
+        if (!isset($task)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Task not found!']);
+            exit;
+        }
+
+        echo json_encode($task);
+    }
+
+    public function updateStatusTask()
+    {
+        $id = $_POST['id'];
+        $status = $_POST['status'];
+
+        if (empty($id) || !isset($id)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Task ID invalid!']);
+            exit;
+        }
+
+        $task = $this->model->getById($id);
+
+        if (!isset($task)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Task not found!']);
+            exit;
+        }
+
+        if (empty($status) || !isset($status) || $status == 'TODO') {
+            $status = 'IN PROGRESS';
+        } else {
+            $status = 'FINISHED';
+        }
+
+        $this->model->update(
+            $task['id'],
+            $task['name'],
+            $task['description'],
+            $task['start_date'],
+            $task['due_date'],
+            $task['category_id'],
+            $status
+        );
+
+        echo 'Task updated successfully.';
+    }
 }
 
 $controller = new TaskController();
@@ -72,6 +130,12 @@ if (isset($_REQUEST['action'])) {
             break;
         case 'addTask':
             $controller->addTask();
+            break;
+        case 'updateStatusTask':
+            $controller->updateStatusTask();
+            break;
+        case 'getTaskById':
+            $controller->getTaskById();
             break;
         default:
             http_response_code(500);
