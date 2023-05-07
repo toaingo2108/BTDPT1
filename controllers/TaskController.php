@@ -98,10 +98,13 @@ class TaskController
             exit;
         }
 
+        $finished_date = null;
+
         if (empty($status) || !isset($status) || $status == 'TODO') {
             $status = 'IN PROGRESS';
         } else {
             $status = 'FINISHED';
+            $finished_date = date('Y-m-d H:i:s'); // Current date and time
         }
 
         $this->model->update(
@@ -110,6 +113,7 @@ class TaskController
             $task['description'],
             $task['start_date'],
             $task['due_date'],
+            $finished_date,
             $task['category_id'],
             $status
         );

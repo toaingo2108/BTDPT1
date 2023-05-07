@@ -56,13 +56,14 @@ class TaskModel
         $stmt->execute();
     }
 
-    public function update($id, $name, $description, $start_date, $due_date, $category_id, $status)
+    public function update($id, $name, $description, $start_date, $due_date, $finished_date, $category_id, $status)
     {
         $sql = 'UPDATE TASK 
                 SET name = :name, 
                     description = :description, 
                     start_date = :start_date, 
                     due_date = :due_date, 
+                    finished_date = :finished_date, 
                     category_id = :category_id, 
                     status = :status 
                 WHERE id = :id';
@@ -72,6 +73,7 @@ class TaskModel
         $stmt->bindValue(':description', $description);
         $stmt->bindValue(':start_date', $start_date);
         $stmt->bindValue(':due_date', $due_date);
+        $stmt->bindValue(':finished_date', $finished_date);
         $stmt->bindValue(':category_id', $category_id);
         $stmt->bindValue(':status', $status);
         $stmt->execute();
