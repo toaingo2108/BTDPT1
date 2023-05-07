@@ -1,6 +1,7 @@
 $(document).ready(() => {
   const urlParams = getParams(window.location.href);
   const page = urlParams.page;
+  const id = urlParams.id;
 
   if (page == "list") {
     // Lấy danh sách tasks
@@ -15,6 +16,10 @@ $(document).ready(() => {
 
   if (page == "taskForm") {
     $("#task-form").ready(() => {
+      if (id) {
+        handleFillDataTaskUpdate(id);
+      }
+
       getCategories();
 
       $("#task-form-start_date").on("change", function () {
@@ -44,6 +49,9 @@ $(document).ready(() => {
 
 const taskFormSubmit = (e) => {
   e.preventDefault();
+  const urlParams = getParams(window.location.href);
+  const id = urlParams.id;
+  let action = "addTask";
   const formData = {
     name: $("#task-form-name").val(),
     description: $("#task-form-description").val(),
@@ -51,10 +59,14 @@ const taskFormSubmit = (e) => {
     start_date: $("#task-form-start_date").val(),
     due_date: $("#task-form-due_date").val(),
   };
+  if (id) {
+    formData.id = id;
+    action = "updateTask";
+  }
   $.ajax({
     url: "../controllers/TaskController.php",
     type: "POST",
-    data: { action: "addTask", ...formData },
+    data: { action, ...formData },
     success: (data) => {
       $("#task-form-name").val("");
       $("#task-form-description").val("");
@@ -118,10 +130,12 @@ const getTasks = () => {
           <td>${!!task.finished_date ? task.finished_date : "..."}</td>
           <td>
             <div class='d-flex p-2'>
-              <button type="button" class="btn btn-outline-info btn-sm ml-2">Update</button>
-              <button type="button" class="btn btn-info btn-sm ml-2" onClick="handleRedirectInfoTask(event)" data-task-id="${
+              <button type="button" class="btn btn-outline-info btn-sm ml-2" onClick="handleRedirect(event)" data-task-id="${
                 task.id
-              }">Info</button>
+              }" data-page="taskForm">Update</button>
+              <button type="button" class="btn btn-info btn-sm ml-2" onClick="handleRedirect(event)" data-task-id="${
+                task.id
+              }" data-page="info">Info</button>
             </div>
           </td>
         </tr>
@@ -142,7 +156,9 @@ const handleDeleteManyTasks = (e) => {
     .get()
     .map((id) => parseInt(id));
 
-  if (idsToDelete.length === 0) return;
+  if (idsToDelete.length === 0) {
+    return alert("Vui lòng chọn ít nhất 1 công việc");
+  }
 
   if (
     !window.confirm(
@@ -233,9 +249,10 @@ const handleChangeStatusTask = (event) => {
   });
 };
 
-const handleRedirectInfoTask = (event) => {
+const handleRedirect = (event) => {
   const id = $(event.target).data("task-id");
-  window.location.href = `${window.location.pathname}?page=info&id=${id}`;
+  const page = $(event.target).data("page");
+  window.location.href = `${window.location.pathname}?page=${page}&id=${id}`;
 };
 
 const getParams = (url) => {
@@ -330,6 +347,35 @@ const handleDeleteCategory = (event) => {
     data: { action: "deleteCategory", id },
     success: (response) => {
       getCategories();
+    },
+    error: (xhr, status, error) => {
+      // Handle error response
+      if (xhr.status === 400) {
+        alert(xhr.responseText);
+      } else {
+        alert("An error occurred: " + error);
+      }
+    },
+  });
+};
+
+const handleFillDataTaskUpdate = (id) => {
+  $("#task-form-header").empty().append("Cập nhật công việc");
+  $("#task-form-btn-submit").empty().append("Cập nhật");
+
+  if (!id) return;
+
+  $.ajax({
+    url: "../controllers/TaskController.php",
+    method: "GET",
+    data: { action: "getTaskById", id: id },
+    success: (response) => {
+      const task = JSON.parse(response);
+      $("#task-form-name").val(task.name);
+      $("#task-form-description").val(task.description);
+      $("#task-form-category_id").val(task.category_id);
+      $("#task-form-start_date").val(task.start_date);
+      $("#task-form-due_date").val(task.due_date);
     },
     error: (xhr, status, error) => {
       // Handle error response

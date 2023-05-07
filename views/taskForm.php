@@ -1,5 +1,5 @@
 <section>
-    <h4 class="my-4">Tạo công việc mới</h4>
+    <h4 class="my-4" id='task-form-header'>Tạo công việc mới</h4>
     <form id='task-form'>
         <div class="form-group">
             <label for="name">Tên</label>
@@ -24,6 +24,6 @@
             <input type="datetime-local" class="form-control" id="task-form-due_date" aria-describedby="start_dateHelp" placeholder="" required>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">Tạo</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-block mt-4" id='task-form-btn-submit'>Tạo</button>
     </form>
 </section>

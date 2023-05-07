@@ -120,6 +120,46 @@ class TaskController
 
         echo 'Task updated successfully.';
     }
+
+    public function updateTask()
+    {
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $description = $_POST['description'];
+        $start_date = $_POST['start_date'];
+        $due_date = $_POST['due_date'];
+        $category_id = $_POST['category_id'];
+
+        $task = $this->model->getById($id);
+
+        if (
+            !isset($name) ||
+            !isset($description) ||
+            !isset($start_date) ||
+            !isset($due_date) ||
+            !isset($category_id) ||
+            empty($name) ||
+            empty($description) ||
+            empty($start_date) ||
+            empty($due_date) ||
+            empty($category_id)
+        ) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Please complete all information']);
+            exit;
+        }
+
+        $this->model->update(
+            $id,
+            $name,
+            $description,
+            $start_date,
+            $due_date,
+            $task['finished_date'],
+            $category_id,
+            $task['status']
+        );
+    }
 }
 
 $controller = new TaskController();
@@ -137,6 +177,9 @@ if (isset($_REQUEST['action'])) {
             break;
         case 'updateStatusTask':
             $controller->updateStatusTask();
+            break;
+        case 'updateTask':
+            $controller->updateTask();
             break;
         case 'getTaskById':
             $controller->getTaskById();
