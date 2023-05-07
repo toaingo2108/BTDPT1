@@ -9,12 +9,18 @@ class TaskModel
         $this->db = new PDO('mysql:host=127.0.0.1;dbname=TaskManagementDB', 'root', '210801');
     }
 
-    public function getAllTasks()
+    public function getAllTasks($searchText)
     {
         $sql = "SELECT t.*, c.name as categoryName FROM TASK t, CATEGORY c 
-                WHERE t.category_id = c.id
-                ORDER BY t.id DESC;";
+        WHERE t.category_id = c.id AND (t.name LIKE :searchText OR t.description LIKE :searchText)
+        ORDER BY t.id DESC";
+        if (!isset($searchText) || empty($searchText)) {
+            $sql = "SELECT t.*, c.name as categoryName FROM TASK t, CATEGORY c 
+            WHERE t.category_id = c.id
+            ORDER BY t.id DESC";
+        }
         $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':searchText', '%' . $searchText . '%');
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -78,4 +84,17 @@ class TaskModel
         $stmt->bindValue(':status', $status);
         $stmt->execute();
     }
+
+    // public function searchTasks($searchText)
+    // {
+    //     $sql = "SELECT t.*, c.name as categoryName FROM TASK t, CATEGORY c 
+    //         WHERE t.category_id = c.id AND (t.name LIKE :searchText OR t.description LIKE :searchText)
+    //         ORDER BY t.id DESC";
+    //     $stmt = $this->db->prepare($sql);
+    //     $stmt->bindValue(':searchText', '%' . $searchText . '%');
+    //     $stmt->execute();
+    //     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //     return $result;
+    // }
 }

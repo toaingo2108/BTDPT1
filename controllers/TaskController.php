@@ -13,7 +13,8 @@ class TaskController
 
     public function getAllTasks()
     {
-        $tasks = $this->model->getAllTasks();
+        $searchText = $_GET['searchText'];
+        $tasks = $this->model->getAllTasks($searchText);
         echo json_encode($tasks);
     }
 
@@ -160,6 +161,20 @@ class TaskController
             $task['status']
         );
     }
+
+    public function searchTasks()
+    {
+        $searchText = $_POST['searchText'];
+
+        if (!isset($searchText) || empty($searchText)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Please enter text']);
+            exit;
+        }
+
+        $tasks = $this->model->getAllTasks($searchText);
+        echo json_encode($tasks);
+    }
 }
 
 $controller = new TaskController();
@@ -184,6 +199,12 @@ if (isset($_REQUEST['action'])) {
         case 'getTaskById':
             $controller->getTaskById();
             break;
+        case 'getTaskById':
+            $controller->getTaskById();
+            break;
+            // case 'searchTasks':
+            //     $controller->searchTasks();
+            //     break;
         default:
             http_response_code(500);
             echo 'Error: Action not matched';

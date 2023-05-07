@@ -3,6 +3,8 @@ $(document).ready(() => {
   const page = urlParams.page;
   const id = urlParams.id;
 
+  $("#search-form").submit((e) => handleSearch(e));
+
   if (page == "list") {
     // Lấy danh sách tasks
     $("#tasks-table").ready(() => {
@@ -87,11 +89,20 @@ const taskFormSubmit = (e) => {
   });
 };
 
+const handleSearch = (e) => {
+  e.preventDefault();
+  getTasks();
+};
+
 const getTasks = () => {
+  let searchText = $("#search-text").val();
+  if (searchText == null || searchText == "") {
+    searchText = "%";
+  }
   $.ajax({
     url: "../controllers/TaskController.php",
     type: "GET",
-    data: { action: "getAllTasks" },
+    data: { action: "getAllTasks", searchText },
     success: (data) => {
       const tasks = JSON.parse(data);
       $("#tasks-table tbody").empty();
