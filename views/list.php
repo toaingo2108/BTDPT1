@@ -6,9 +6,11 @@
     <table id="tasks-table" class='table table-bordered table-hover table-striped'>
         <thead class="thead-dark">
             <tr>
-                <th></th>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>ID</th>
                 <th>Tên</th>
                 <th>Mô tả</th>
+                <th>Loại</th>
                 <th>Bắt đầu</th>
                 <th>Ngày hạn</th>
                 <th>Trạng thái</th>

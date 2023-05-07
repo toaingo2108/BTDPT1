@@ -11,7 +11,9 @@ class TaskModel
 
     public function getAllTasks()
     {
-        $sql = "SELECT * FROM TASK ORDER BY id DESC";
+        $sql = "SELECT t.*, c.name as categoryName FROM TASK t, CATEGORY c 
+                WHERE t.category_id = c.id
+                ORDER BY t.id DESC;";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
